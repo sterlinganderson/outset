@@ -237,12 +237,16 @@ def process_items(path, delete_items=False, once=False, override={}):
         logging.error('%s does not exist. Exiting', path)
         exit(1)
 
+    items_to_process = []
     packages = []
     scripts = []
     profiles = []
     d = {}
 
-    for f in os.listdir(path):
+    for dirpath, _, files in os.walk(path):
+        items_to_process.extend(os.path.join(dirpath, f) for f in files)
+
+    for f in items_to_process:
         pathname = os.path.join(path, f)
         if check_perms(pathname):
             if pathname.lower().endswith(('pkg', 'mpkg', 'dmg')):
